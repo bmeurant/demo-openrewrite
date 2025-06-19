@@ -1,1 +1,7 @@
-# demo-openrewrite
+# Demo Openrewrite
+
+1. Use spring-boot 2.7 base project using tag `base-spring-boot-2.7`
+
+  ```bash
+  git checkout base-spring-boot-2.7
+  ```
