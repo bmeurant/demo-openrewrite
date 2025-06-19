@@ -11,8 +11,14 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>openrewrite-demo</name>
     <description>Demo project for OpenRewrite</description>
+
     <properties>
-        <java.version>11</java.version> </properties>
+        <java.version>11</java.version>
+        <rewrite.version>6.11.0</rewrite.version>
+        <rewrite-maven-plugin.version>6.11.0</rewrite-maven-plugin.version>
+        <rewrite-recipe-spring.version>6.8.2</rewrite-recipe-spring.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -85,6 +91,38 @@
                         </exclude>
                     </excludes>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.openrewrite.maven</groupId>
+                <artifactId>rewrite-maven-plugin</artifactId>
+                <version>6.11.0</version>
+                <configuration>
+                    <activeRecipes>
+                        <recipe>io.bmeurant.MigrationJava11To21SpringBoot27To34JUnit5</recipe>
+                    </activeRecipes>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.openrewrite</groupId>
+                        <artifactId>rewrite-yaml</artifactId>
+                        <version>8.55.3</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.openrewrite.recipe</groupId>
+                        <artifactId>rewrite-spring</artifactId>
+                        <version>6.8.2</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.openrewrite.recipe</groupId>
+                        <artifactId>rewrite-testing-frameworks</artifactId>
+                        <version>3.10.0</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.openrewrite.recipe</groupId>
+                        <artifactId>rewrite-static-analysis</artifactId>
+                        <version>2.10.0</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
     </build>

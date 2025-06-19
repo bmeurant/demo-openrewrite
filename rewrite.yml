@@ -1,0 +1,25 @@
+type: specs.openrewrite.org/v1beta/recipe
+name: io.bmeurant.MigrationJava11To21SpringBoot27To34JUnit5
+displayName: Migration Java 11 → 21, Spring Boot 2.7 → 3.5, JUnit 4 → 5
+description: Complete migration to upgrade Java 11 to 21, Spring Boot 2.7 to 3.5, and upgrade of JUnit 4 tests to JUnit 5.
+recipeList:
+  - org.openrewrite.java.migrate.UpgradeToJava17
+  - org.openrewrite.java.migrate.UpgradeToJava21
+  - org.openrewrite.java.spring.boot2.SpringBoot2BestPractices
+  - org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_0
+  - org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_1
+  - org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_2
+  - org.openrewrite.java.spring.boot3.SpringBootProperties_3_2
+  - org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_3
+  - org.openrewrite.java.spring.boot3.SpringBootProperties_3_3
+  - org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_4
+  - org.openrewrite.java.migrate.jakarta.JavaxMigrationToJakarta
+  - org.openrewrite.java.testing.junit5.JUnit4to5Migration
+  - org.openrewrite.java.spring.boot3.ReplaceMockBeanAndSpyBean
+  - org.openrewrite.java.format.AutoFormat
+  - org.openrewrite.java.RemoveUnusedImports
+  - org.openrewrite.staticanalysis.CodeCleanup
+  - org.openrewrite.staticanalysis.CommonStaticAnalysis
+  - org.openrewrite.staticanalysis.SimplifyTernaryRecipes
+  - org.openrewrite.staticanalysis.FinalizeLocalVariables
+  - org.openrewrite.java.migrate.util.JavaUtilAPIs
