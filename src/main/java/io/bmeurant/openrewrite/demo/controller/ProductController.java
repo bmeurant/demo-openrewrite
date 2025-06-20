@@ -5,7 +5,10 @@ import io.bmeurant.openrewrite.demo.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/products")
@@ -14,7 +17,7 @@ public class ProductController {
     @Autowired
     private ProductRepository productRepository;
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
+    @GetMapping("/")
     public Iterable<Product> getAllProducts() {
         return productRepository.findAll();
     }
@@ -25,9 +28,9 @@ public class ProductController {
      * @param name The name of the product to retrieve, passed as a path variable.
      * @return A ResponseEntity containing the product if found, or a 404 Not Found status.
      */
-    @RequestMapping(value = "/name/{name}", method = RequestMethod.GET)
+    @GetMapping("/name/{name}")
     public ResponseEntity<Product> getProductByName(@PathVariable String name) {
-        Product product = productRepository.findByName(name);
+        final Product product = productRepository.findByName(name);
         if (product != null) {
             return new ResponseEntity<>(product, HttpStatus.OK);
         } else {
