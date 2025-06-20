@@ -1,0 +1,90 @@
+name: OpenRewrite Suggestions on PR
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop # Define the target branches for PRs
+
+jobs:
+  openrewrite-suggestions:
+    runs-on: ubuntu-latest
+    # Permissions required for the GitHub Actions bot to create branches and pull requests
+    permissions:
+      contents: write # To commit changes made by OpenRewrite
+      pull-requests: write # To create/update a pull request
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          # fetch-depth: 0 is crucial to ensure the full git history is available.
+          # This is often needed by OpenRewrite for accurate refactorings and
+          # essential for the bot to create new branches correctly from a known state.
+          fetch-depth: 0
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven # Cache Maven dependencies for faster builds
+
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Get PR Branch Name
+        id: get_pr_branch
+        # The head_ref is the branch of the Pull Request being opened/updated
+        run: echo "PR_BRANCH_NAME=${{ github.head_ref }}" >> $GITHUB_OUTPUT
+
+      - name: Define Rewrite Branch Name
+        id: set_rewrite_branch
+        # Construct a unique branch name for OpenRewrite's suggestions.
+        # This branch will be created off the original PR's branch.
+        run: echo "REWRITE_BRANCH=openrewrite/${{ steps.get_pr_branch.outputs.PR_BRANCH_NAME }}" >> $GITHUB_OUTPUT
+
+      - name: Run OpenRewrite to apply changes
+        # This step executes OpenRewrite using the 'run' goal.
+        # It will physically modify the source files on the runner if recipes apply.
+        # Recipes are read from the 'rewrite.yml' file as configured in pom.xml.
+        # No need to specify -Drewrite.recipe.active here.
+        run: mvn org.openrewrite.maven:rewrite-maven-plugin:run
+        # We don't use 'continue-on-error: true' here.
+        # If OpenRewrite makes changes, 'mvn' will exit with a non-zero code,
+        # which is what 'peter-evans/create-pull-request' detects for changes.
+
+      - name: Create Pull Request with OpenRewrite changes
+        # This action automatically checks for uncommitted changes,
+        # commits them if found, pushes to the specified branch,
+        # and then creates or updates a Pull Request.
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }} # Use the default GitHub token with write permissions
+          commit-message: "chore(deps): Apply OpenRewrite suggestions for ${{ github.event.pull_request.head.ref }}"
+          title: "OpenRewrite Suggestions for ${{ github.event.pull_request.head.ref }}"
+          body: |
+            This Pull Request contains automated code style and dependency upgrade suggestions from OpenRewrite based on the recipes configured in the project's `rewrite.yml`.
+            
+            These changes apply to the code in the PR titled "**${{ github.event.pull_request.title }}**".
+            
+            Please review these changes. If acceptable, merge this PR into your feature branch (`${{ github.event.pull_request.head.ref }}`). This will integrate the automated refactorings before your primary PR is merged into `main`/`develop`.
+          # The branch where OpenRewrite's changes will be committed and pushed.
+          branch: ${{ steps.set_rewrite_branch.outputs.REWRITE_BRANCH }}
+          # The base branch for this *new* PR will be the original feature branch
+          # (e.g., if you PR'd 'feature/A' into 'develop', this new PR will be 'openrewrite/feature-A' into 'feature-A').
+          base: ${{ github.head_ref }}
+          # Automatically delete the OpenRewrite suggestion branch after it's merged.
+          delete-branch: true
+          # Define the committer and author for the automated commit
+          committer: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
+          author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
+          # Add labels to easily identify these automated suggestion PRs
+          labels: |
+            openrewrite-suggestion
+            automated-refactor
