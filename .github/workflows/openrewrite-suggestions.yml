@@ -13,6 +13,7 @@ jobs:
     permissions:
       contents: write # To commit changes made by OpenRewrite
       pull-requests: write # To create/update a pull request
+      issues: write # To add labels to the PR
 
     steps:
       - name: Checkout code
