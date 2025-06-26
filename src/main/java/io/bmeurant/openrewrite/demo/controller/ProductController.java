@@ -30,7 +30,7 @@ public class ProductController {
      */
     @GetMapping("/name/{name}")
     public ResponseEntity<Product> getProductByName(@PathVariable String name) {
-        final Product product = productRepository.findByName(name);
+        Product product = productRepository.findByName(name);
         if (product != null) {
             return new ResponseEntity<>(product, HttpStatus.OK);
         } else {
