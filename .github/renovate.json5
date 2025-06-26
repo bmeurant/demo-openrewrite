@@ -20,6 +20,16 @@
       "matchManagers": ["maven"],
       "groupName": "all-maven-dependencies",
       "matchUpdateTypes": ["patch", "minor", "major"]
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "groupName": null,
+      "matchUpdateTypes": ["major"]
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "groupName": "github-actions-patch-and-minor",
+      "matchUpdateTypes": ["patch", "minor"]
     }
   ]
 }
