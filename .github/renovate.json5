@@ -1,0 +1,25 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended" // Change from "config:base" to "config:recommended"
+  ],
+  "labels": ["dependencies", "renovate"],
+  "prConcurrentLimit": 10,
+  "automerge": false,
+  "branchPrefix": "renovate/",
+  "gitAuthor": "Renovate Bot <renovate@whitesourcesoftware.com>",
+  "prBodyTemplate": "{{PR_BODY}}\n\nThis PR has been opened by Renovate to update a dependency.\nOnce this PR is merged, OpenRewrite will be triggered to propose automated code changes in a separate PR.",
+  "packageRules": [
+    {
+      "matchPackageNames": ["*"], // Change from "matchPackagePatterns" to "matchPackageNames"
+      "prBodyNotes": [
+        "This update may trigger OpenRewrite suggestions. Once this PR is merged, a new PR with OpenRewrite changes might be opened."
+      ]
+    },
+    {
+      "matchManagers": ["maven"],
+      "groupName": "all-maven-dependencies",
+      "matchUpdateTypes": ["patch", "minor", "major"]
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+name: Run Renovate
+
+on:
+  schedule:
+    # Run Renovate every day at 03:00 AM UTC
+    - cron: '0 3 * * *'
+  workflow_dispatch: {} # Allows manual triggering of the workflow
+
+jobs:
+  renovate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Required for Renovate to create branches and commits
+      pull-requests: write # Required for Renovate to create and update pull requests
+      issues: write # Required for Renovate to add labels to PRs
+      # It's good practice to add "repository-projects: write" if you use GitHub Projects,
+      # but not strictly necessary for basic dependency updates.
+      # repository-projects: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Renovate
+        uses: renovatebot/github-action@v43.0.1 # Use the official Renovate GitHub Action
+        with:
+          token: ${{ secrets.RENOVATE_TOKEN }} # Use a dedicated token for Renovate
+          configurationFile: .github/renovate.json5 # Path to your Renovate config file
+          # You might want to uncomment these for debugging purposes
+          # logFile: renovate.log
+        env:
+          LOG_LEVEL: debug
+          RENOVATE_REPOSITORIES: ${{ github.repository }}
