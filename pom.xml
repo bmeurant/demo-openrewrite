@@ -79,7 +79,7 @@
             <plugin>
                 <groupId>org.openrewrite.maven</groupId>
                 <artifactId>rewrite-maven-plugin</artifactId>
-                <version>6.12.0</version>
+                <version>6.12.1</version>
                 <configuration>
                     <activeRecipes>
                         <recipe>io.bmeurant.MigrationJava11To21SpringBoot27To34JUnit5</recipe>
@@ -89,7 +89,7 @@
                     <dependency>
                         <groupId>org.openrewrite</groupId>
                         <artifactId>rewrite-yaml</artifactId>
-                        <version>8.56.0</version>
+                        <version>8.56.1</version>
                     </dependency>
                     <dependency>
                         <groupId>org.openrewrite.recipe</groupId>
